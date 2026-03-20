@@ -10,7 +10,7 @@ Construção de um RAG usando documentos do projeto Téo Me Why
   - [Chunking](#chunking)
   - [Vector Database](#vector-database)
   - [LLM](#llm)
-- [Referência](#referencia)
+- [Referência](#referência)
 
 ## Etapas
 
