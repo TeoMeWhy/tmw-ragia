@@ -1,0 +1,11 @@
+# Configuração
+.vscode
+
+# Variáveis de ambiente
+*.env
+
+# Ambientes virtuais
+.venv
+
+# Dados
+/data/*.md
