@@ -1,0 +1,11 @@
+services:
+
+  ragia_api:
+    build:
+      context: ./ragia
+      dockerfile: Dockerfile
+    env_file:
+      - ./ragia/.env
+    ports:
+      - "8000:8000"
+    restart: always

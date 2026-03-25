@@ -1,30 +1,26 @@
-# %%
+import flask
+
 import os
 import dotenv
-
 import mlflow
-from openai import OpenAI
 
+from openai import OpenAI
 import qdrant_client
 from qdrant_client import models
 from fastembed import TextEmbedding, SparseTextEmbedding, LateInteractionTextEmbedding
 
 dotenv.load_dotenv()
-# %%
 
+print("Carregando modelo de guardrails...")
 mlflow.set_tracking_uri(os.getenv("MLFLOW_URI"))
-
 model_infos = mlflow.search_registered_models(filter_string="name='ragia_guardrails'")[0]
 MODEL_GUARDRAILS_CUTOFF = model_infos.tags["cutoff"]
 MODEL_GUARDRAILS_NAME = model_infos.name
 MODEL_GUARDRAILS_LAST_VERSION = max([ int(v.version) for v in model_infos.latest_versions])
+MODEL_GUARDRAILS_URI = f"models:/{MODEL_GUARDRAILS_NAME}/{MODEL_GUARDRAILS_LAST_VERSION}"
+MODEL_GUARDRAILS = mlflow.sklearn.load_model(MODEL_GUARDRAILS_URI)
+print(f"Modelo de guardrails carregado: {MODEL_GUARDRAILS_URI}")
 
-print(MODEL_GUARDRAILS_LAST_VERSION)
-
-MODEL_GUARDRAILS = mlflow.sklearn.load_model(f"models:/{MODEL_GUARDRAILS_NAME}/{MODEL_GUARDRAILS_LAST_VERSION}")
-MODEL_GUARDRAILS
-
-# %%
 
 DENSE_MODEL = os.getenv("DENSE_MODEL")
 SPARSE_MODEL = os.getenv("SPARSE_MODEL")
@@ -50,20 +46,21 @@ sparse_model = SparseTextEmbedding(SPARSE_MODEL)
 colbert_model = LateInteractionTextEmbedding(COLBERT_MODEL)
 
 
-# %%
+app = flask.Flask(__name__)
 
-while True:
-    query = input("Entre com uma pergunta: ")
+@app.route("/predict", methods=["POST"])
+def predict():
 
+    data = flask.request.json
+    query = data.get("query", "")
     if query == "":
-        break
+        return flask.jsonify({"error":"Query is required."}), 400
 
     dense_query = list(dense_model.passage_embed(query))[0].tolist()
 
     prob_guardrails = MODEL_GUARDRAILS.predict_proba([dense_query])[0][1]
     if prob_guardrails <= float(MODEL_GUARDRAILS_CUTOFF):
-        print("Pergunta fora do contexto. Tente reformular.")
-        continue
+        return flask.jsonify({"error":"Pergunta fora do contexto. Tente reformular."}), 400
 
     sparse_query = list(sparse_model.passage_embed(query))[0].as_object() 
     colbert_query = list(colbert_model.passage_embed(query))[0].tolist()
@@ -83,9 +80,6 @@ while True:
         limit=3,
     )
 
-    for r in results.points:
-        print(r.score, r.payload["text"])
-    
     prompt = f"""
     Responda a seguinte pergunta usando os seguintes parágrafos de contexto:
 
@@ -97,6 +91,8 @@ while True:
     ---
 
     Responda de forma clara e objetivo com no máximo 300 caracteres.
+
+    Caso você não tenha contexto suficiente para responder, retorne uma string vazia.
     """
 
     response = openai_client.responses.create(
@@ -104,20 +100,7 @@ while True:
         model="openai/gpt-oss-20b",
     )
     
-    print("\nResposta:", response.output_text)
-    print("\n", "----"*3, end="\n\n")
+    return flask.jsonify({"response": response.output_text}), 200
 
-# %%
-
-
-import requests
-
-query = "Como me destacar no mercado de dados?"
- 
-resp = requests.post(
-    "http://0.0.0.0:8000/predict",
-    json={"query":query},
-)
-
-print(query)
-print(resp.json().get("response", ""))
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000)
