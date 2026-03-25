@@ -90,9 +90,11 @@ def predict():
     
     ---
 
-    Responda de forma clara e objetivo com no máximo 300 caracteres.
+    Responda de forma clara, objetiva e descontraída com no máximo 300 caracteres.
 
     Caso você não tenha contexto suficiente para responder, retorne uma string vazia.
+
+    A nossa plataforma de cursos é: cursos.teomewhy.org . Consire esse link sempre que for recomendá-la.
     """
 
     response = openai_client.responses.create(

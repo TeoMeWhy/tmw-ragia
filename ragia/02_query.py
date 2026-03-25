@@ -112,7 +112,7 @@ while True:
 
 import requests
 
-query = "Como me destacar no mercado de dados?"
+query = "vai ter certificado?"
  
 resp = requests.post(
     "http://0.0.0.0:8000/predict",
