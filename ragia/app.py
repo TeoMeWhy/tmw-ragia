@@ -94,7 +94,7 @@ def predict():
 
     Caso você não tenha contexto suficiente para responder, retorne uma string vazia.
 
-    A nossa plataforma de cursos é: cursos.teomewhy.org . Consire esse link sempre que for recomendá-la.
+    Quando sugerir o link de nossa plataforma, utilize esse: cursos.teomewhy.org
     """
 
     response = openai_client.responses.create(

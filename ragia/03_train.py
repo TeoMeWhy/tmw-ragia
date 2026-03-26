@@ -20,8 +20,12 @@ dense_model = TextEmbedding(DENSE_MODEL)
 df = pd.read_excel("https://docs.google.com/spreadsheets/d/1u1MPiL3q4SAfelDeoT39fqxon7EtV0BBMePqk1J9apA/export?format=xlsx&id=1u1MPiL3q4SAfelDeoT39fqxon7EtV0BBMePqk1J9apA&gid=0")
 df.head()
 
+# %%
 
-X = list(dense_model.passage_embed(df["Pergunta"]))
+df.shape
+
+# %%
+X = list(dense_model.passage_embed(df["Pergunta"].tolist()))
 y = df["Resposta"].tolist()
 
 X_train, X_test, y_train, y_test = model_selection.train_test_split(
