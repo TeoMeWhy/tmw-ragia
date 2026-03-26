@@ -112,10 +112,10 @@ while True:
 
 import requests
 
-query = "vai ter certificado?"
- 
+query = "olá? Preciso de ajuda sobre a área de dados"
+
 resp = requests.post(
-    "http://0.0.0.0:8000/predict",
+    "http://192.168.0.18:5003/predict",
     json={"query":query},
 )
 
