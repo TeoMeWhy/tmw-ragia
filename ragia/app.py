@@ -109,12 +109,32 @@ def predict():
     Evite utilizar os caracteres '[', ']', '(', ')' e '\\n' em sua resposta.
     """
 
-    response = gemini_client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=prompt
-    )
+    try:
+        response = gemini_client.models.generate_content(
+                model=GEMINI_MODEL,
+                contents=prompt
+        )
+
+        text = response.text
+        return flask.jsonify({"response": text}), 200
+
+    except Exception as e:
+        print(f"Error generating response: {e}")
+
+
+    try:
+        response = openai_client.responses.create(
+                input=prompt,
+                model="openai/gpt-oss-20b",
+            )
+        
+        return flask.jsonify({"response": response.output_text}), 200
     
-    return flask.jsonify({"response": response.text}), 200
+    except Exception as e:
+        print(f"Error generating response: {e}")
+        return flask.jsonify({"error": "Error generating response."}), 500
+
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5003)
