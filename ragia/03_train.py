@@ -73,4 +73,5 @@ with mlflow.start_run():
     clf.fit(X,y)
 
     mlflow.sklearn.log_model(clf, "model")
+
 # %%

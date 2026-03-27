@@ -9,3 +9,4 @@ qdrant_client==1.17.1
 Requests==2.32.5
 scikit_learn==1.8.0
 tqdm==4.67.3
+google-genai==1.68.0
