@@ -4,6 +4,8 @@ import os
 import dotenv
 import mlflow
 
+from google import genai
+
 from openai import OpenAI
 import qdrant_client
 from qdrant_client import models
@@ -31,10 +33,15 @@ QDRANT_CLUSTER_ENDPOINT = os.getenv("QDRANT_CLUSTER_ENDPOINT")
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL")
+
 qudrant_client = qdrant_client.QdrantClient(
     url = QDRANT_CLUSTER_ENDPOINT,
     api_key = QDRANT_API_KEY,
 )
+
+gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 openai_client = OpenAI(
     api_key = GROQ_API_KEY,
@@ -77,32 +84,37 @@ def predict():
         },
         query = colbert_query,
         using="colbert",
-        limit=3,
+        limit=4,
     )
 
+    context = "\n".join([f'- {r.payload["text"]}\n' for r in results.points])
+
     prompt = f"""
-    Responda a seguinte pergunta usando os seguintes parágrafos de contexto:
+    Responda a pergunta abaixo usando contexto com os documentos elencados por ordem de relevância.
 
     Pergunta: {query}
 
     Contexto:
-    {'\n'.join([f'- {r.payload["text"]}\n' for r in results.points])}
+    
+    {context}
     
     ---
 
-    Responda de forma clara, objetiva e descontraída com no máximo 300 caracteres.
+    Sumarize o contexto e responda de forma clara, objetiva e descontraída com no máximo 300 caracteres.
 
-    Caso você não tenha contexto suficiente para responder, retorne uma string vazia.
+    Caso o contexto não tenha relação direta com o que foi perguntado, retorne uma string vazia.
 
-    Quando sugerir o link de nossa plataforma, utilize esse: cursos.teomewhy.org
+    Caso em sua resposta, haja link para nossa plataforma, considere este: cursos.teomewhy.org
+
+    Evite utilizar os caracteres '[', ']', '(', ')' e '\\n' em sua resposta.
     """
 
-    response = openai_client.responses.create(
-        input=prompt,
-        model="openai/gpt-oss-20b",
+    response = gemini_client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=prompt
     )
     
-    return flask.jsonify({"response": response.output_text}), 200
+    return flask.jsonify({"response": response.text}), 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5003)
