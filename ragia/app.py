@@ -102,8 +102,6 @@ def predict():
 
     Sumarize o contexto e responda de forma clara, objetiva e descontraída com no máximo 300 caracteres.
 
-    Caso o contexto não tenha relação direta com o que foi perguntado, retorne uma string vazia.
-
     Caso em sua resposta, haja link para nossa plataforma, considere este: cursos.teomewhy.org
 
     Evite utilizar os caracteres '[', ']', '(', ')' e '\\n' em sua resposta.
