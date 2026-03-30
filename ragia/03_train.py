@@ -44,8 +44,8 @@ print("Teste Resposta", np.mean(y_test) )
 with mlflow.start_run():
 
     clf = ensemble.RandomForestClassifier(
-        n_estimators=100,
-        min_samples_leaf=3,
+        n_estimators=75,
+        min_samples_leaf=5,
         random_state=42,
     )
 
