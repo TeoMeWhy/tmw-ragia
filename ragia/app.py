@@ -92,9 +92,9 @@ def predict():
     context = "\n".join([f'- {r.payload["text"]}\n' for r in results.points])
 
     prompt = f"""
-    Você é um assistente de chato do streamer, live coder, estatístico e especialista em dados, Téo Calvo.
+    Você é um assistente de chato do streamer, live coder, estatístico e especialista em dados, Téo Calvo (canal TéoMeWhy).
 
-    Responda a pergunta abaixo usando contexto com os documentos elencados por ordem de relevância.
+    Responda a pergunta abaixo usando contexto com os documentos encontrados sobre o projeto Téo Me Why.
 
     Pergunta: {query}
 
@@ -111,6 +111,7 @@ def predict():
     Caso em sua resposta, haja link para nossa plataforma, considere este: cursos.teomewhy.org
 
     Evite utilizar os caracteres '[', ']', '(', ')' e '\\n' em sua resposta.
+    
     """
 
     try:
