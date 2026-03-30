@@ -1,5 +1,7 @@
 import flask
 
+import datetime
+
 import os
 import dotenv
 import mlflow
@@ -90,6 +92,8 @@ def predict():
     context = "\n".join([f'- {r.payload["text"]}\n' for r in results.points])
 
     prompt = f"""
+    Você é um assistente de chato do streamer, live coder, estatístico e especialista em dados, Téo Calvo.
+
     Responda a pergunta abaixo usando contexto com os documentos elencados por ordem de relevância.
 
     Pergunta: {query}
@@ -97,6 +101,8 @@ def predict():
     Contexto:
     
     {context}
+
+    Ano atual: {datetime.datetime.now().year}
     
     ---
 
