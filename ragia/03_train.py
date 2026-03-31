@@ -1,4 +1,10 @@
 # %%
+
+import os
+
+import dotenv
+dotenv.load_dotenv()
+
 import pandas as pd
 import numpy as np
 import mlflow
@@ -9,15 +15,19 @@ from sklearn import metrics
 
 from fastembed import TextEmbedding
 
-mlflow.set_tracking_uri("http://192.168.0.18:5000")
-mlflow.set_experiment(experiment_id=568283666648943226)
+MLFLOW_URI = os.getenv("MLFLOW_URI")
+DATA_PATH = os.getenv("DATA_PATH")
+
+mlflow.set_tracking_uri(MLFLOW_URI)
+mlflow.set_experiment(experiment_name='ragia_guardrails')
 
 # %%
 DENSE_MODEL = "intfloat/multilingual-e5-large"
 
 dense_model = TextEmbedding(DENSE_MODEL)
 
-df = pd.read_excel("https://docs.google.com/spreadsheets/d/1u1MPiL3q4SAfelDeoT39fqxon7EtV0BBMePqk1J9apA/export?format=xlsx&id=1u1MPiL3q4SAfelDeoT39fqxon7EtV0BBMePqk1J9apA&gid=0")
+
+df = pd.read_excel(DATA_PATH)
 df.head()
 
 # %%
@@ -44,8 +54,8 @@ print("Teste Resposta", np.mean(y_test) )
 with mlflow.start_run():
 
     clf = ensemble.RandomForestClassifier(
-        n_estimators=75,
-        min_samples_leaf=5,
+        n_estimators=100,
+        min_samples_leaf=3,
         random_state=42,
     )
 
@@ -74,4 +84,7 @@ with mlflow.start_run():
 
     mlflow.sklearn.log_model(clf, "model")
 
+# %%
+
+print(np.mean(y))
 # %%
