@@ -31,7 +31,7 @@ doc_convert = DocumentConverter()
 
 chunker = HybridChunker(
     tokenizer=AutoTokenizer.from_pretrained(DENSE_MODEL),
-    max_tokens=400,
+    max_tokens=450,
 )
 
 dense_model = TextEmbedding(DENSE_MODEL)
