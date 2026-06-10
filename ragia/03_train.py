@@ -45,7 +45,7 @@ X_train, X_test, y_train, y_test = model_selection.train_test_split(
     random_state=42,
     stratify=y,
 )
-    
+
 print("Treino Resposta", np.mean(y_train) )
 print("Teste Resposta", np.mean(y_test) )
 
@@ -54,7 +54,7 @@ print("Teste Resposta", np.mean(y_test) )
 with mlflow.start_run():
 
     clf = ensemble.RandomForestClassifier(
-        n_estimators=100,
+        n_estimators=500,
         min_samples_leaf=3,
         random_state=42,
     )
@@ -86,5 +86,5 @@ with mlflow.start_run():
 
 # %%
 
-print(np.mean(y))
+print(np.mean(y_train))
 # %%

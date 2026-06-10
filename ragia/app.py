@@ -86,15 +86,15 @@ def predict():
         },
         query = colbert_query,
         using="colbert",
-        limit=4,
+        limit=5,
     )
 
     context = "\n".join([f'- {r.payload["text"]}\n' for r in results.points])
 
     prompt = f"""
-    Você é um assistente de chato do streamer, live coder, estatístico e especialista em dados, Téo Calvo (canal TéoMeWhy).
+    Você é um assistente de chat do streamer, live coder, estatístico e especialista em dados, Téo Calvo (canal TéoMeWhy).
 
-    Responda a pergunta abaixo usando contexto com os documentos encontrados sobre o projeto Téo Me Why.
+    Responda a pergunta abaixo usando contexto com os documentos encontrados sobre o projeto Téo Me Why e carreira na área de dados e tecnologia.
 
     Pergunta: {query}
 
@@ -106,7 +106,7 @@ def predict():
     
     ---
 
-    Sumarize o contexto e responda de forma clara, objetiva e descontraída com no máximo 300 caracteres.
+    Sumarize a resposta com o contexto e responda de forma clara, objetiva e descontraída com no máximo 300 caracteres. Lembre-se que se trata de uma live aberta.
 
     Caso em sua resposta, haja link para nossa plataforma, considere este: cursos.teomewhy.org
 
