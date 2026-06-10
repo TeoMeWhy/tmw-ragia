@@ -31,7 +31,7 @@ doc_convert = DocumentConverter()
 
 chunker = HybridChunker(
     tokenizer=AutoTokenizer.from_pretrained(DENSE_MODEL),
-    max_tokens=450,
+    max_tokens=300,
 )
 
 dense_model = TextEmbedding(DENSE_MODEL)
@@ -39,6 +39,7 @@ sparse_model = SparseTextEmbedding(SPARSE_MODEL)
 colbert_model = LateInteractionTextEmbedding(COLBERT_MODEL)
 
 # %%
+
 def doc_to_vectordb(path):
 
     doc = doc_convert.convert(path)
